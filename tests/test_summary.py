@@ -1,4 +1,5 @@
 import json
+from types import SimpleNamespace
 
 from citesure.prompts import FACETS, NOT_FOUND
 from citesure.service import (
@@ -39,6 +40,30 @@ def test_summary_word_count_covers_both_requested_boundaries():
 
     sections = {name: "detail " * 34 for name in FACETS}
     assert summary_word_count("overview " * 30, sections) == 200
+
+
+def test_add_pdf_reports_indexing_progress(monkeypatch):
+    chunks = [SimpleNamespace(paper_id="paper-id", title="Test paper")]
+
+    class FakeStore:
+        def has_paper(self, _paper_id):
+            return False
+
+        def add_chunks(self, added_chunks):
+            assert added_chunks == chunks
+
+    monkeypatch.setattr("citesure.service.PaperStore", lambda: FakeStore())
+    monkeypatch.setattr("citesure.service.ingest_pdf", lambda _path: chunks)
+    progress = []
+
+    result = CiteSure().add_pdf("paper.pdf", progress.append)
+
+    assert result == {"paper_id": "paper-id", "title": "Test paper", "chunks": 1}
+    assert progress == [
+        "Extracting text and preparing passages…",
+        "Embedding and indexing 1 passage…",
+        "Paper indexed.",
+    ]
 
 
 def test_summary_parser_fills_missing_facets_with_not_found():
