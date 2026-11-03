@@ -47,7 +47,7 @@ except Exception:
 from citesure.config import settings  # noqa: E402
 from citesure.ingest import Chunk  # noqa: E402
 from citesure.service import CiteSure, summarize_paper_metadata  # noqa: E402
-from citesure.store import embedder  # noqa: E402
+from citesure.store import embedder, is_embedder_loaded  # noqa: E402
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("citesure.streamlit")
@@ -108,7 +108,15 @@ def get_app() -> CiteSure:
     return CiteSure()
 
 
+@st.cache_resource
+def prepare_embedding_model():
+    return embedder()
+
+
 pp = get_app()
+if not is_embedder_loaded():
+    with st.spinner("Loading the paper search model (first startup only)…"):
+        prepare_embedding_model()
 st.session_state.setdefault("history", [])
 st.session_state.setdefault("questions", 0)
 st.session_state.setdefault("discover_results", [])
@@ -351,42 +359,60 @@ with st.sidebar:
     st.markdown("## 📚 Your library")
     st.caption(f"{len(papers)} paper{'s' if len(papers) != 1 else ''} indexed")
     uploaded_files = st.file_uploader(
-        "Add research PDFs",
+        "Add one research PDF",
         type=["pdf"],
-        accept_multiple_files=True,
-        help="PDFs are processed locally by this app. Maximum 25 MB per file.",
+        accept_multiple_files=False,
+        key=f"pdf-upload-{st.session_state.get('upload_widget_version', 0)}",
+        help="Upload one PDF at a time. Maximum 25 MB.",
     )
     if uploaded_files:
-        for uploaded in uploaded_files:
-            content = uploaded.getvalue()
-            if len(content) > 25 * 1024 * 1024:
-                st.error(f"{uploaded.name}: file exceeds the 25 MB upload limit.")
-                continue
-            if not content:
-                st.error(f"{uploaded.name}: the file is empty.")
-                continue
-            digest = hashlib.sha1(content).hexdigest()[:12]
-            safe_name = Path(uploaded.name).name
-            destination = Path(settings.upload_dir) / f"{digest}_{safe_name}"
-            if pp.store.has_paper(digest):
-                continue
-            with st.spinner(f"Indexing {uploaded.name}…"):
-                try:
-                    destination.parent.mkdir(parents=True, exist_ok=True)
-                    destination.write_bytes(content)
-                    added = pp.add_pdf(str(destination))
-                    st.success(f"Added {added['title']}")
-                except ValueError as exc:
-                    st.error(f"{uploaded.name}: {exc}")
-                    destination.unlink(missing_ok=True)
-                except OSError as exc:
-                    logger.exception("Could not save uploaded PDF")
-                    st.error(f"Could not save {uploaded.name}: {exc}")
-                except Exception as exc:
-                    logger.exception("Failed to index uploaded PDF")
-                    destination.unlink(missing_ok=True)
-                    st.error(f"Could not index {uploaded.name}: {exc}")
-        st.rerun()
+        uploaded_size = uploaded_files.size
+        st.caption(f"{uploaded_size / (1024 * 1024):.1f} MB · uploaded and ready to index")
+        if st.button("Index PDF", type="primary", key="index-pdf"):
+            if uploaded_size > 25 * 1024 * 1024:
+                st.error(f"{uploaded_files.name}: file exceeds the 25 MB limit.")
+            elif uploaded_size == 0:
+                st.error(f"{uploaded_files.name}: the file is empty.")
+            else:
+                content = uploaded_files.getbuffer()
+                digest = hashlib.sha1(content).hexdigest()[:12]
+                safe_name = Path(uploaded_files.name).name
+                destination = Path(settings.upload_dir) / f"{digest}_{safe_name}"
+                if pp.store.has_paper(digest):
+                    st.info(f"{uploaded_files.name} is already in your library.")
+                else:
+                    try:
+                        destination.parent.mkdir(parents=True, exist_ok=True)
+                        with destination.open("wb") as output:
+                            output.write(content)
+                        with st.status("Starting PDF indexing…", expanded=True) as status:
+                            added = pp.add_pdf(
+                                str(destination),
+                                progress_callback=lambda message: status.update(
+                                    label=message,
+                                    state="running",
+                                ),
+                            )
+                            status.update(label="Paper indexed successfully.", state="complete")
+                        st.success(
+                            f"Added **{added['title']}** "
+                            f"({added['chunks']} passages)."
+                        )
+                        st.session_state["upload_widget_version"] = (
+                            st.session_state.get("upload_widget_version", 0) + 1
+                        )
+                        st.rerun()
+                    except ValueError as exc:
+                        destination.unlink(missing_ok=True)
+                        st.error(f"{uploaded_files.name}: {exc}")
+                    except OSError as exc:
+                        logger.exception("Could not save uploaded PDF")
+                        destination.unlink(missing_ok=True)
+                        st.error(f"Could not save {uploaded_files.name}: {exc}")
+                    except Exception as exc:
+                        logger.exception("Failed to index uploaded PDF")
+                        destination.unlink(missing_ok=True)
+                        st.error(f"Could not index {uploaded_files.name}: {exc}")
 
     library_filter = st.text_input("Filter library", placeholder="Search paper titles")
     visible_papers = [
