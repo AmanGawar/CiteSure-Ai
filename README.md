@@ -57,8 +57,9 @@ docker compose up --build                       # UI on http://localhost:8501
 docker compose --profile api up --build         # also starts the API on http://localhost:8000
 ```
 
-The paper-discovery web page is served by FastAPI at `http://localhost:8000/`.
-The Streamlit app on port 8501 does not currently include the discovery page.
+The standalone paper-discovery web page is served by FastAPI at `http://localhost:8000/`.
+The Streamlit app on port 8501 also includes paper discovery, filtered search results,
+abstract-based summaries, importing discovered records, and library Q&A/summary/compare workflows.
 
 ### REST API
 ```bash
@@ -78,9 +79,15 @@ Endpoints: `POST /papers`, `GET /papers`, `DELETE /papers/{id}`, `POST /ask`, `G
    ```
 4. Deploy. The first boot is slow while the embedding model downloads.
 
+The Streamlit interface provides Ask, Discover, Summarize, and Compare tabs. Discovery
+searches OpenAlex, supports year and open-access filters, ranks results semantically,
+and lets you summarize or import records with abstracts into your library. Summaries,
+Q&A history, and comparisons can be downloaded as Markdown. To increase OpenAlex's
+request budget, add `OPENALEX_API_KEY` as another Streamlit secret.
+
 Notes for a public demo:
 - **Protect your wallet.** Set a spend limit in your LLM provider console. The app caps each session at `MAX_QUESTIONS` (default 40).
-- Streamlit Cloud storage is temporary, so the index resets when the app restarts.
+- Streamlit Cloud storage is temporary, so uploaded PDFs and the index may reset when the app restarts.
 - `pysqlite3-binary` is installed on Linux to satisfy ChromaDB's SQLite requirement; `streamlit_app.py` swaps it in automatically.
 - The free tier has limited memory. If the app runs out, keep `USE_RERANK=false` (the reranker is a second model).
 
