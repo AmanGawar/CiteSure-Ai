@@ -385,13 +385,12 @@ with st.sidebar:
                         destination.parent.mkdir(parents=True, exist_ok=True)
                         with destination.open("wb") as output:
                             output.write(content)
-                        with st.status("Starting PDF indexing…", expanded=True) as status:
+                        with st.status(
+                            "Extracting text and creating search embeddings…",
+                            expanded=True,
+                        ) as status:
                             added = pp.add_pdf(
-                                str(destination),
-                                progress_callback=lambda message: status.update(
-                                    label=message,
-                                    state="running",
-                                ),
+                                str(destination)
                             )
                             status.update(label="Paper indexed successfully.", state="complete")
                         st.success(
