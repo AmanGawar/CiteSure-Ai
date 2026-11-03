@@ -84,6 +84,8 @@ searches OpenAlex, supports year and open-access filters, ranks results semantic
 and lets you summarize or import records with abstracts into your library. Summaries,
 Q&A history, and comparisons can be downloaded as Markdown. To increase OpenAlex's
 request budget, add `OPENALEX_API_KEY` as another Streamlit secret.
+Upload and index PDFs one at a time; the embedding model loads during app startup so
+the first upload does not also have to wait for model initialization.
 
 Notes for a public demo:
 - **Protect your wallet.** Set a spend limit in your LLM provider console. The app caps each session at `MAX_QUESTIONS` (default 40).
