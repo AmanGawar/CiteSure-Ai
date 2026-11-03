@@ -2,7 +2,7 @@
 import json
 import re
 from functools import lru_cache
-from typing import Any
+from typing import Any, Callable
 
 from .config import settings
 from .ingest import ingest_pdf
@@ -78,13 +78,26 @@ class CiteSure:
         self._summary_cache: dict[str, dict[str, Any]] = {}
 
     # ---- indexing -------------------------------------------------------------
-    def add_pdf(self, path: str) -> dict:
+    def add_pdf(
+        self,
+        path: str,
+        progress_callback: Callable[[str], None] | None = None,
+    ) -> dict:
+        if progress_callback:
+            progress_callback("Extracting text and preparing passages…")
         chunks = ingest_pdf(path)
         if not chunks:
             raise ValueError("No extractable text found. Is this a scanned PDF?")
         pid = chunks[0].paper_id
         if not self.store.has_paper(pid):
+            if progress_callback:
+                progress_callback(
+                    f"Embedding and indexing {len(chunks)} "
+                    f"passage{'s' if len(chunks) != 1 else ''}…"
+                )
             self.store.add_chunks(chunks)
+        if progress_callback:
+            progress_callback("Paper indexed.")
         return {"paper_id": pid, "title": chunks[0].title, "chunks": len(chunks)}
 
     # ---- question answering ---------------------------------------------------
