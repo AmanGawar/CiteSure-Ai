@@ -1,0 +1,3 @@
+{"question": "Which optimizer?", "paper_id": "REPLACE_WITH_PAPER_ID", "evidence": ["Adam"], "answerable": true}
+{"question": "Which dataset?", "paper_id": "REPLACE_WITH_PAPER_ID", "evidence": ["WMT"], "answerable": true}
+{"question": "How many A100 GPUs?", "paper_id": "REPLACE_WITH_PAPER_ID", "evidence": [], "answerable": false}

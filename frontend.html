@@ -1,0 +1,3050 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>CiteSure AI — Research Assistant</title>
+
+  <style>
+    :root {
+
+      --bg: #0b1020;
+
+      --panel: #121a2d;
+
+      --panel2: #18233a;
+
+      --border: #293650;
+
+      --text: #eef3ff;
+
+      --muted: #9baac4;
+
+      --accent: #8b9dff;
+
+      --accent2: #a6f0d0;
+
+      --danger: #ff9a9a;
+
+      --radius: 16px;
+
+    }
+
+    * {
+      box-sizing: border-box
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Inter, Segoe UI, Arial, sans-serif
+    }
+
+    button,
+    input,
+    select,
+    textarea {
+      font: inherit
+    }
+
+    button {
+      cursor: pointer
+    }
+
+    a {
+      color: #b5c1ff;
+      text-decoration: none
+    }
+
+    a:hover {
+      text-decoration: underline
+    }
+
+    .app {
+      display: flex;
+      min-height: 100vh
+    }
+
+    .sidebar {
+      width: 245px;
+      background: #0e1527;
+      border-right: 1px solid var(--border);
+      padding: 24px 15px;
+      flex-shrink: 0
+    }
+
+    .brand {
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: -.5px;
+      margin: 0 8px 6px
+    }
+
+    .brand span {
+      color: var(--accent)
+    }
+
+    .tagline {
+      font-size: 12px;
+      color: var(--muted);
+      margin: 0 8px 30px
+    }
+
+    .nav-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: #71809d;
+      margin: 22px 10px 9px
+    }
+
+    .nav-btn {
+      display: flex;
+      width: 100%;
+      align-items: center;
+      gap: 11px;
+      padding: 12px;
+      border: 0;
+      border-radius: 10px;
+      background: transparent;
+      color: var(--muted);
+      text-align: left;
+      margin: 4px 0
+    }
+
+    .nav-btn:hover,
+    .nav-btn.active {
+      background: #202c47;
+      color: var(--text)
+    }
+
+    .nav-btn.active {
+      box-shadow: inset 3px 0 var(--accent)
+    }
+
+    .sidebar-bottom {
+      margin-top: 40px;
+      padding: 13px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.6
+    }
+
+    .main {
+      flex: 1;
+      min-width: 0;
+      padding: 32px clamp(16px, 4vw, 54px);
+      max-width: 1600px;
+      margin: 0 auto;
+      width: 100%
+    }
+
+    .topline {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 27px
+    }
+
+    .eyebrow {
+      font-size: 11px;
+      letter-spacing: 1.8px;
+      text-transform: uppercase;
+      color: var(--accent);
+      font-weight: 700
+    }
+
+    h1 {
+      font-size: clamp(25px, 3vw, 36px);
+      letter-spacing: -1px;
+      margin: 8px 0
+    }
+
+    h2 {
+      font-size: 20px;
+      margin: 0 0 8px
+    }
+
+    h3 {
+      font-size: 16px;
+      margin: 0 0 8px
+    }
+
+    p {
+      line-height: 1.65
+    }
+
+    .muted {
+      color: var(--muted)
+    }
+
+    .small {
+      font-size: 12px
+    }
+
+    .view {
+      display: none
+    }
+
+    .view.active {
+
+      display: block;
+
+    }
+
+    .hero {
+      background: linear-gradient(130deg, #1a2945, #151a32 65%, #252448);
+      border: 1px solid #344362;
+      border-radius: 22px;
+      padding: 30px;
+      margin-bottom: 22px
+    }
+
+    .hero p {
+      max-width: 760px;
+      color: #bdc9e1;
+      margin-bottom: 0
+    }
+
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 17px
+    }
+
+    .tag,
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: 11px;
+      color: #c7d3eb;
+      background: #111a2c
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 15px;
+      margin: 18px 0
+    }
+
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      min-width: 0
+    }
+
+    .stat {
+      font-size: 29px;
+      font-weight: 800;
+      margin: 10px 0 4px
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: var(--muted)
+    }
+
+    .section-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      margin: 28px 0 14px
+    }
+
+    .row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap
+    }
+
+    .spread {
+      justify-content: space-between
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+      margin: 12px 0;
+      flex: 1;
+      min-width: 160px
+    }
+
+    label {
+      font-size: 12px;
+      color: #bdc9df
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      background: #0b1324;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px;
+      color: var(--text);
+      outline: none
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      border-color: var(--accent)
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 100px;
+      line-height: 1.5
+    }
+
+    .btn {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: #202c45;
+      color: var(--text);
+      padding: 10px 15px;
+      font-weight: 650
+    }
+
+    .btn:hover {
+      filter: brightness(1.13)
+    }
+
+    .btn.primary {
+      background: var(--accent);
+      color: #10152b;
+      border-color: var(--accent)
+    }
+
+    .btn.secondary {
+      background: transparent
+    }
+
+    .btn.danger {
+      color: var(--danger)
+    }
+
+    .btn:disabled {
+      opacity: .5;
+      cursor: not-allowed
+    }
+
+    .notice {
+      border: 1px solid var(--border);
+      background: #10182a;
+      border-radius: 12px;
+      padding: 13px 15px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.6;
+      margin: 14px 0
+    }
+
+    .notice.success {
+      border-color: #285c4c;
+      color: #b4f0d6
+    }
+
+    .notice.error {
+      border-color: #633b4a;
+      color: #ffb6bd
+    }
+
+    .notice.warning {
+      border-color: #68572f;
+      color: #f4dca4
+    }
+
+    .paper-list,
+    .result-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px
+    }
+
+    .paper-card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 18px
+    }
+
+    .paper-card h3 {
+      line-height: 1.45
+    }
+
+    .paper-meta {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin: 10px 0;
+      color: var(--muted);
+      font-size: 12px
+    }
+
+    .paper-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 14px
+    }
+
+    .paper-actions a {
+      display: inline-flex;
+      align-items: center;
+      padding: 9px 12px;
+      border: 1px solid var(--border);
+      border-radius: 9px
+    }
+
+    .score-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 10px
+    }
+
+    .score {
+      font-size: 11px;
+      padding: 5px 8px;
+      border-radius: 7px;
+      background: #202b43;
+      color: #d0dbf4
+    }
+
+    .score strong {
+      color: var(--accent2)
+    }
+
+    .abstract-details {
+      margin-top: 12px;
+      border-top: 1px solid var(--border);
+      padding-top: 10px
+    }
+
+    .abstract-details summary {
+      cursor: pointer;
+      color: #c5d0ed;
+      font-size: 12px
+    }
+
+    .abstract-text {
+      font-size: 13px;
+      color: #b7c4dc;
+      line-height: 1.75;
+      white-space: pre-wrap
+    }
+
+    .word-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(139, 157, 255, 0.15);
+      border: 1px solid rgba(139, 157, 255, 0.35);
+      color: var(--accent);
+      font-size: 12px;
+      padding: 5px 12px;
+      border-radius: 999px;
+      font-weight: 650
+    }
+
+    .btn-sm {
+      padding: 6px 12px;
+      font-size: 12px;
+      border-radius: 8px
+    }
+
+    .summary-subpart {
+      background: #131c31;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px 16px;
+      margin: 12px 0
+    }
+
+    .summary-subpart h4 {
+      margin: 0 0 6px 0;
+      font-size: 14px;
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      gap: 7px
+    }
+
+    .summary-subpart p {
+      margin: 0;
+      font-size: 13.5px;
+      color: #d5e1f7;
+      line-height: 1.65;
+      white-space: normal
+    }
+
+    .discovery-summary-box {
+      background: #11192e;
+      border: 1px solid #36486c;
+      border-radius: 14px;
+      padding: 18px;
+      margin-top: 14px;
+      animation: fadeIn 0.2s ease
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-4px)
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0)
+      }
+    }
+
+    .filter-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+      gap: 12px;
+      margin: 12px 0
+    }
+
+    .empty {
+      padding: 35px 15px;
+      text-align: center;
+      color: var(--muted);
+      border: 1px dashed var(--border);
+      border-radius: 14px
+    }
+
+    .answer-box {
+      background: #10182a;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 20px;
+      line-height: 1.8;
+      overflow-wrap: anywhere
+    }
+
+    .answer-box p {
+      white-space: pre-wrap
+    }
+
+    .source-list {
+      margin-top: 18px
+    }
+
+    .source-item {
+      border-left: 2px solid var(--accent);
+      padding: 10px 13px;
+      margin: 10px 0;
+      background: #10182a;
+      border-radius: 0 8px 8px 0;
+      font-size: 13px
+    }
+
+    .source-item p {
+      margin: 6px 0
+    }
+
+    .progress {
+      height: 5px;
+      border-radius: 9px;
+      background: #26334e;
+      overflow: hidden;
+      margin: 12px 0
+    }
+
+    .progress span {
+      display: block;
+      height: 100%;
+      width: 0;
+      background: var(--accent);
+      transition: width .2s
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px
+    }
+
+    th,
+    td {
+      text-align: left;
+      padding: 12px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top
+    }
+
+    th {
+      color: #aab8d2;
+      font-weight: 600
+    }
+
+    .table-wrap {
+      overflow-x: auto
+    }
+
+    .mobile-menu {
+      display: none
+    }
+
+    footer {
+      padding: 30px 0 10px;
+      text-align: center;
+      font-size: 11px;
+      color: #687794
+    }
+
+    @media(max-width:850px) {
+
+      .sidebar {
+        width: 205px
+      }
+
+      .grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr))
+      }
+
+      .main {
+        padding: 25px 20px
+      }
+
+    }
+
+    @media(max-width:650px) {
+
+      .app {
+        display: block
+      }
+
+      .sidebar {
+        width: 100%;
+        padding: 13px;
+        border-right: 0;
+        border-bottom: 1px solid var(--border)
+      }
+
+      .brand {
+        display: inline-block;
+        margin: 4px 8px
+      }
+
+      .tagline,
+      .sidebar-bottom,
+      .nav-label {
+        display: none
+      }
+
+      .nav-group {
+        display: flex;
+        overflow-x: auto;
+        gap: 4px;
+        margin-top: 10px
+      }
+
+      .nav-btn {
+        width: auto;
+        white-space: nowrap;
+        margin: 0;
+        padding: 10px
+      }
+
+      .main {
+        padding: 20px 14px
+      }
+
+      .grid {
+        grid-template-columns: 1fr
+      }
+
+      .hero {
+        padding: 22px
+      }
+
+      .section-head {
+        align-items: flex-start;
+        flex-direction: column
+      }
+
+    }
+
+    /* Layout alignment fixes — preserves the existing color palette */
+    .view {
+      min-width: 0;
+    }
+
+    .view.active {
+      display: block;
+    }
+
+    .main {
+      min-width: 0;
+      flex: 1;
+    }
+
+    .topline,
+    .section-head,
+    .form-actions {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .card,
+    .panel,
+    .form-card {
+      min-width: 0;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 7px;
+    }
+
+    input,
+    select,
+    textarea {
+      box-sizing: border-box;
+      width: 100%;
+      max-width: 100%;
+    }
+
+    button {
+      white-space: normal;
+    }
+
+    .nav-btn {
+      justify-content: flex-start;
+    }
+
+    @media (max-width: 650px) {
+      .grid {
+        grid-template-columns: minmax(0, 1fr);
+      }
+
+      .topline,
+      .section-head,
+      .form-actions {
+        align-items: stretch;
+        flex-direction: column;
+      }
+    }
+  </style>
+
+</head>
+
+<body>
+
+  <div class="app">
+
+    <aside class="sidebar">
+
+      <div class="brand">CiteSure <span>AI</span></div>
+
+      <div class="tagline">Trust the evidence behind every citation.</div>
+
+      <div class="nav-label">Workspace</div>
+
+      <div class="nav-group">
+
+        <button class="nav-btn active" data-view="overview">◈ Overview</button>
+
+        <button class="nav-btn" data-view="library">▤ Paper Library</button>
+
+        <button class="nav-btn" data-view="discover">⌕ Discover Papers</button>
+
+        <button class="nav-btn" data-view="ask">✧ Ask Papers</button>
+
+        <button class="nav-btn" data-view="summary">≡ Paper Summary</button>
+
+        <button class="nav-btn" data-view="compare">⇄ Compare Papers</button>
+
+      </div>
+
+      <div class="sidebar-bottom">
+
+        <strong style="color:#dbe4fa">Research workspace</strong><br>
+
+        Upload papers, explore literature, ask evidence-based questions, and compare findings.
+
+        <div style="margin-top:8px">API status: <span id="api-status">Checking…</span></div>
+
+      </div>
+
+    </aside>
+
+    <main class="main">
+
+      <div class="topline">
+
+        <div>
+
+          <div class="eyebrow">Research intelligence workspace</div>
+
+          <div class="muted small">Your papers, evidence, and discovery tools in one place.</div>
+
+        </div>
+
+        <button class="btn secondary" id="refresh-all">↻ Refresh</button>
+
+      </div>
+
+      <!-- OVERVIEW -->
+
+      <section class="view active" id="view-overview">
+
+        <div class="hero">
+
+          <div class="eyebrow">Welcome to CiteSure</div>
+
+          <h1>Research with evidence, not guesswork.</h1>
+
+          <p>Organize research papers, discover related literature, ask questions grounded in your documents, generate
+            summaries, and compare studies in one workspace.</p>
+
+          <div class="tags">
+
+            <span class="tag">PDF research library</span>
+
+            <span class="tag">Evidence-based Q&A</span>
+
+            <span class="tag">Paper discovery</span>
+
+            <span class="tag">Research comparison</span>
+
+          </div>
+
+          <div class="row" style="margin-top:22px">
+
+            <button class="btn primary" data-go="library">Open paper library →</button>
+
+            <button class="btn" data-go="discover">Discover papers</button>
+
+            <button class="btn" data-go="ask">Ask a question</button>
+
+          </div>
+
+        </div>
+
+        <div class="grid">
+
+          <div class="card">
+
+            <div class="stat" id="stat-papers">—</div>
+
+            <div class="stat-label">Papers in your library</div>
+
+          </div>
+
+          <div class="card">
+
+            <div class="stat">6</div>
+
+            <div class="stat-label">Research workspace tools and views</div>
+
+          </div>
+
+          <div class="card">
+
+            <div class="stat">PDF</div>
+
+            <div class="stat-label">Document upload format</div>
+
+          </div>
+
+        </div>
+
+        <div class="section-head">
+
+          <div>
+            <h2>Get started</h2>
+            <div class="muted small">Choose the next step in your research workflow.</div>
+          </div>
+
+        </div>
+
+        <div class="grid">
+
+          <div class="card">
+
+            <h3>01 · Build your library</h3>
+
+            <p class="muted small">Upload a research PDF and manage your saved papers.</p>
+
+            <button class="btn" data-go="library">Manage library →</button>
+
+          </div>
+
+          <div class="card">
+
+            <h3>02 · Discover literature</h3>
+
+            <p class="muted small">Search OpenAlex for related works and filter by publication year.</p>
+
+            <button class="btn" data-go="discover">Find papers →</button>
+
+          </div>
+
+          <div class="card">
+
+            <h3>03 · Explore your evidence</h3>
+
+            <p class="muted small">Ask questions, summarize a paper, or compare multiple papers.</p>
+
+            <button class="btn" data-go="ask">Start asking →</button>
+
+          </div>
+
+        </div>
+
+        <div id="overview-message" class="notice">Your workspace is ready. Upload a PDF or discover papers to begin.
+        </div>
+
+      </section>
+
+      <!-- PAPER LIBRARY -->
+
+      <section class="view" id="view-library">
+
+        <div class="eyebrow">Your collection</div>
+
+        <h1>Paper Library</h1>
+
+        <p class="muted">Upload and manage the research PDFs used by your CiteSure workspace.</p>
+
+        <div class="card">
+
+          <h2>Upload a research paper</h2>
+
+          <p class="muted small">PDF only · Maximum file size: 25 MB</p>
+
+          <form id="upload-form">
+
+            <div class="field">
+
+              <label for="pdf-file">Choose PDF file</label>
+
+              <input id="pdf-file" type="file" accept=".pdf,application/pdf" required>
+
+            </div>
+
+            <button class="btn primary" id="upload-button" type="submit">Upload and process PDF</button>
+
+          </form>
+
+          <div id="upload-message"></div>
+
+          <div class="progress"><span id="upload-progress"></span></div>
+
+        </div>
+
+        <div class="section-head">
+
+          <div>
+            <h2>Your papers</h2>
+            <div class="muted small" id="library-count">Loading papers…</div>
+          </div>
+
+          <button class="btn" id="refresh-library">Refresh library</button>
+
+        </div>
+
+        <div id="library-list" class="paper-list">
+          <div class="empty">Loading your library…</div>
+        </div>
+
+      </section>
+
+      <!-- DISCOVER -->
+
+      <section class="view" id="view-discover">
+
+        <div class="hero">
+
+          <div class="eyebrow">Literature discovery</div>
+
+          <h1>Discover research papers.</h1>
+
+          <p>Search OpenAlex for research works related to your topic. Results include publication details, citation
+            counts, open-access information, abstracts when available, and links to source pages.</p>
+
+          <div class="tags">
+
+            <span class="tag">OpenAlex search</span>
+
+            <span class="tag">Year filter</span>
+
+            <span class="tag">Citation information</span>
+
+            <span class="tag">Abstract previews</span>
+
+            <span class="tag">Semantic ranking</span>
+
+          </div>
+
+        </div>
+
+        <div class="card">
+
+          <h2>Search by research topic</h2>
+
+          <p class="muted small">Describe a topic, question, method, or research area.</p>
+
+          <form id="discover-form">
+
+            <div class="field">
+
+              <label for="discover-topic">Research topic</label>
+
+              <textarea id="discover-topic" minlength="3" maxlength="2000"
+                placeholder="e.g. Retrieval-augmented generation for scientific literature verification"
+                required></textarea>
+
+            </div>
+
+            <div class="filter-row">
+
+              <div class="field">
+
+                <label for="discover-limit">Number of papers</label>
+
+                <select id="discover-limit">
+
+                  <option value="10">10 papers</option>
+
+                  <option value="20">20 papers</option>
+
+                  <option value="30">30 papers</option>
+
+                </select>
+
+              </div>
+
+              <div class="field">
+
+                <label for="discover-year">Publication year</label>
+
+                <select id="discover-year">
+
+                  <option value="">Any year</option>
+
+                </select>
+
+              </div>
+
+              <div class="field">
+
+                <label for="discover-year-mode">Year filter mode</label>
+
+                <select id="discover-year-mode">
+
+                  <option value="exact">Exact year only</option>
+
+                  <option value="from">From year onwards (recent)</option>
+
+                </select>
+
+              </div>
+
+              <div class="field">
+
+                <label for="discover-sort">Ranking & sort order</label>
+
+                <select id="discover-sort">
+
+                  <option value="smart">Smart Hybrid (Semantic + Recency + Citations)</option>
+
+                  <option value="semantic">Semantic Relevance (Cosine Similarity)</option>
+
+                  <option value="recent">Publication Date (Newest first)</option>
+
+                  <option value="citations">Citation Count (Most cited first)</option>
+
+                </select>
+
+              </div>
+
+            </div>
+
+            <div class="row" style="margin: 6px 0 14px 0;">
+
+              <label
+                style="display:inline-flex; align-items:center; gap:8px; cursor:pointer; font-size:13px; color:#c7d4ee;">
+
+                <input type="checkbox" id="discover-oa-only" style="width:auto; cursor:pointer;">
+
+                <span>Show open access papers only (with free PDF/HTML access)</span>
+
+              </label>
+
+            </div>
+
+            <div class="row">
+
+              <button class="btn primary" id="discover-button" type="submit">⌕ Search papers</button>
+
+              <button class="btn secondary" id="clear-discovery" type="button">Clear results</button>
+
+            </div>
+
+          </form>
+
+          <div id="discover-message"></div>
+
+        </div>
+
+        <div class="notice">
+
+          <strong>How ranking works</strong><br>
+
+          CiteSure ranks discovered papers using embedding-based semantic similarity,
+
+          publication recency, and citation count. The current ranking combines
+
+          75% semantic similarity, 15% recency, and 10% citation signal.
+
+          Semantic similarity is calculated from embeddings of the research topic
+
+          and each paper's title and abstract. It measures textual similarity;
+
+          it is not a probability or a guarantee that a paper is relevant.
+
+        </div>
+
+        <div class="section-head">
+
+          <div>
+
+            <h2>Discovery results</h2>
+
+            <div class="muted small" id="discover-count">Search for a topic to see papers here.</div>
+
+          </div>
+
+        </div>
+
+        <div id="discovery-results" class="result-list">
+
+          <div class="empty">Enter a research topic above to discover papers.</div>
+
+        </div>
+
+      </section>
+
+      <!-- ASK -->
+
+      <section class="view" id="view-ask">
+
+        <div class="eyebrow">Evidence-based Q&A</div>
+
+        <h1>Ask your papers</h1>
+
+        <p class="muted">Ask a question about the papers in your library. CiteSure will return an answer and the
+          available source information.</p>
+
+        <div class="card">
+
+          <form id="ask-form">
+
+            <div class="field">
+
+              <label for="ask-scope">Search scope</label>
+
+              <select id="ask-scope">
+
+                <option value="all">All papers in my library</option>
+
+              </select>
+
+            </div>
+
+            <div class="field">
+
+              <label for="ask-question">Your research question</label>
+
+              <textarea id="ask-question" minlength="3"
+                placeholder="What methods do these papers use, and what limitations do the authors report?"
+                required></textarea>
+
+            </div>
+
+            <div class="row">
+
+              <button class="btn primary" id="ask-button" type="submit">Ask CiteSure</button>
+
+              <button class="btn secondary" id="clear-ask" type="button">Clear conversation</button>
+
+            </div>
+
+          </form>
+
+        </div>
+
+        <div id="ask-message"></div>
+
+        <div id="ask-answer" style="margin-top:18px"></div>
+
+      </section>
+
+      <!-- SUMMARY -->
+
+      <section class="view" id="view-summary">
+
+        <div class="eyebrow">Paper understanding</div>
+
+        <h1>Paper Summary</h1>
+
+        <p class="muted">Generate a summary for a paper saved in your library.</p>
+
+        <div class="card">
+
+          <form id="summary-form">
+
+            <div class="field">
+
+              <label for="summary-paper">Select a paper</label>
+
+              <select id="summary-paper" required>
+
+                <option value="">Loading papers…</option>
+
+              </select>
+
+            </div>
+
+            <button class="btn primary" id="summary-button" type="submit">Generate summary</button>
+
+          </form>
+
+        </div>
+
+        <div id="summary-message"></div>
+
+        <div id="summary-output" style="margin-top:18px"></div>
+
+      </section>
+
+      <!-- COMPARE -->
+
+      <section class="view" id="view-compare">
+
+        <div class="eyebrow">Cross-paper analysis</div>
+
+        <h1>Compare Papers</h1>
+
+        <p class="muted">Select between two and five papers to compare their problems, methods, datasets, results, and
+          limitations.</p>
+
+        <div class="card">
+
+          <form id="compare-form">
+
+            <div class="field">
+
+              <label>Select papers (choose 2–5)</label>
+
+              <div id="compare-paper-options" class="paper-list">
+
+                <div class="empty">Loading papers…</div>
+
+              </div>
+
+            </div>
+
+            <div class="field">
+
+              <label>Comparison aspects</label>
+
+              <div class="row">
+
+                <label><input type="checkbox" class="aspect-option" value="problem" checked style="width:auto">
+                  Problem</label>
+
+                <label><input type="checkbox" class="aspect-option" value="method" checked style="width:auto">
+                  Method</label>
+
+                <label><input type="checkbox" class="aspect-option" value="datasets" checked style="width:auto">
+                  Datasets</label>
+
+                <label><input type="checkbox" class="aspect-option" value="results" checked style="width:auto">
+                  Results</label>
+
+                <label><input type="checkbox" class="aspect-option" value="limitations" checked style="width:auto">
+                  Limitations</label>
+
+              </div>
+
+            </div>
+
+            <button class="btn primary" id="compare-button" type="submit">Compare selected papers</button>
+
+          </form>
+
+        </div>
+
+        <div id="compare-message"></div>
+
+        <div id="compare-output" style="margin-top:18px"></div>
+
+      </section>
+
+      <footer>CiteSure AI · Research discovery and evidence-assisted analysis</footer>
+
+    </main>
+
+  </div>
+
+  <script>
+
+    "use strict";
+
+    /*
+    
+     * Leave empty when frontend.html is served by the same FastAPI server.
+    
+     * If the frontend is hosted separately, set this to your API base URL.
+    
+     */
+
+    const API_BASE = "";
+
+    const state = {
+
+      papers: [],
+
+      history: [],
+
+      discovery: [],
+
+      loading: false
+
+    };
+
+    const $ = (id) => document.getElementById(id);
+
+    function escapeHtml(value) {
+
+      return String(value ?? "").replace(/[&<>"']/g, ch => ({
+
+        "&": "&amp;",
+
+        "<": "&lt;",
+
+        ">": "&gt;",
+
+        '"': '&quot;',
+
+        "'": "&#39;"
+
+      })[ch]);
+
+    }
+
+    function safeUrl(value) {
+
+      if (!value) return "";
+
+      try {
+
+        const url = new URL(value, window.location.origin);
+
+        if (url.protocol === "https:" || url.protocol === "http:") {
+
+          return url.href;
+
+        }
+
+      } catch (_) { }
+
+      return "";
+
+    }
+
+    function externalLink(url, label) {
+
+      const href = safeUrl(url);
+
+      if (!href) return "";
+
+      return `<a href="${escapeHtml(href)}" target="_blank" rel="noopener noreferrer">${escapeHtml(label)}</a>`;
+
+    }
+
+    function formatDate(value) {
+
+      if (!value) return "Date unavailable";
+
+      const d = new Date(value);
+
+      if (Number.isNaN(d.getTime())) return escapeHtml(value);
+
+      return d.toLocaleDateString(undefined, {
+
+        year: "numeric",
+
+        month: "short",
+
+        day: "numeric"
+
+      });
+
+    }
+
+    function formatNumber(value) {
+
+      const n = Number(value);
+
+      return Number.isFinite(n) ? n.toLocaleString() : "0";
+
+    }
+
+    function showMessage(id, message, type = "") {
+
+      const el = $(id);
+
+      if (!el) return;
+
+      el.innerHTML = message
+
+        ? `<div class="notice ${type}">${escapeHtml(message)}</div>`
+
+        : "";
+
+    }
+
+    function showHtmlMessage(id, html, type = "") {
+
+      const el = $(id);
+
+      if (!el) return;
+
+      el.innerHTML = html ? `<div class="notice ${type}">${html}</div>` : "";
+
+    }
+
+    async function api(path, options = {}) {
+
+      const response = await fetch(API_BASE + path, options);
+
+      const raw = await response.text();
+
+      let data = null;
+
+      if (raw) {
+
+        try {
+
+          data = JSON.parse(raw);
+
+        } catch (_) {
+
+          data = raw;
+
+        }
+
+      }
+
+      if (!response.ok) {
+
+        const detail = data && typeof data === "object"
+
+          ? (data.detail || data.message || JSON.stringify(data))
+
+          : data;
+
+        throw new Error(detail || `Request failed (${response.status})`);
+
+      }
+
+      return data;
+
+    }
+
+    function setBusy(buttonId, busy, busyText = "Working…") {
+
+      const button = $(buttonId);
+
+      if (!button) return;
+
+      if (busy) {
+
+        if (!button.disabled) {
+
+          button.dataset.originalText = button.textContent;
+
+        }
+
+        button.textContent = busyText;
+
+        button.disabled = true;
+
+      } else {
+
+        button.textContent = button.dataset.originalText || button.textContent;
+
+        button.disabled = false;
+
+      }
+
+    }
+
+    function showView(name) {
+
+      document.querySelectorAll(".view").forEach(v => v.classList.remove("active"));
+
+      document.querySelectorAll(".nav-btn").forEach(b => {
+
+        b.classList.toggle("active", b.dataset.view === name);
+
+      });
+
+      const view = $("view-" + name);
+
+      if (view) view.classList.add("active");
+
+      if (name === "library") loadPapers();
+
+      if (name === "discover") populateYearOptions();
+
+      if (name === "ask" || name === "summary" || name === "compare") loadPapers();
+
+    }
+
+    document.querySelectorAll("[data-view]").forEach(button => {
+
+      button.addEventListener("click", () => showView(button.dataset.view));
+
+    });
+
+    document.querySelectorAll("[data-go]").forEach(button => {
+
+      button.addEventListener("click", () => showView(button.dataset.go));
+
+    });
+
+    async function checkHealth() {
+      const status = $("api-status");
+      if (!status) return;
+
+      status.textContent = "Checking…";
+      status.style.color = "var(--muted)";
+
+      try {
+        // Prefer a dedicated health endpoint when the backend provides one.
+        try {
+          await api("/health");
+        } catch (_) {
+          // The current backend already exposes /papers, so use it as a fallback
+          // to confirm that the API is reachable when /health is not implemented.
+          await api("/papers");
+        }
+
+        status.textContent = "Connected";
+        status.style.color = "var(--accent2)";
+      } catch (error) {
+        status.textContent = "Unavailable";
+        status.style.color = "var(--danger)";
+        console.error("CiteSure API health check failed:", error);
+      }
+    }
+
+    function normalizePaper(paper, index = 0) {
+
+      if (typeof paper === "string") {
+
+        return { id: paper, title: paper, index };
+
+      }
+
+      const p = paper || {};
+
+      const id = p.id ?? p.paper_id ?? p.paperId ?? p.uuid ?? p.path ?? String(index);
+
+      return {
+
+        ...p,
+
+        id: String(id),
+
+        title: p.title || p.name || p.filename || p.file_name ||
+
+          p.original_filename || `Paper ${index + 1}`
+
+      };
+
+    }
+
+    async function loadPapers() {
+
+      try {
+
+        const data = await api("/papers");
+
+        const list = Array.isArray(data) ? data : (data?.papers || data?.items || []);
+
+        state.papers = list.map(normalizePaper);
+
+        renderLibrary();
+
+        populatePaperSelectors();
+
+        $("stat-papers").textContent = state.papers.length;
+
+        $("library-count").textContent =
+
+          `${state.papers.length} paper${state.papers.length === 1 ? "" : "s"} in your library`;
+
+      } catch (error) {
+
+        $("library-list").innerHTML =
+
+          `<div class="empty">Could not load your library: ${escapeHtml(error.message)}</div>`;
+
+        $("library-count").textContent = "Unable to load papers";
+
+        $("stat-papers").textContent = "—";
+
+        showMessage(
+
+          "overview-message",
+
+          "Could not load papers. Check that the API server is running.",
+
+          "error"
+
+        );
+
+      }
+
+    }
+
+    function paperId(paper) {
+
+      return String(paper.id);
+
+    }
+
+    function renderLibrary() {
+
+      const container = $("library-list");
+
+      if (!state.papers.length) {
+
+        container.innerHTML =
+
+          `<div class="empty">Your library is empty. Upload a PDF above to get started.</div>`;
+
+        return;
+
+      }
+
+      container.innerHTML = state.papers.map(paper => {
+
+        const id = paperId(paper);
+
+        const title = paper.title || `Paper ${id}`;
+
+        const meta = [
+
+          paper.year || paper.publication_year,
+
+          paper.authors,
+
+          paper.filename
+
+        ].filter(Boolean).map(v => Array.isArray(v) ? v.join(", ") : v);
+
+        return `
+
+      <article class="paper-card">
+
+        <div class="row spread">
+
+          <h3>${escapeHtml(title)}</h3>
+
+          <span class="pill">Saved paper</span>
+
+        </div>
+
+        <div class="paper-meta">
+
+          ${meta.map(x => `<span>${escapeHtml(x)}</span>`).join("")}
+
+        </div>
+
+        <div class="paper-actions">
+
+          <button class="btn" data-summary="${escapeHtml(id)}">Summarize</button>
+
+          <button class="btn secondary" data-ask-paper="${escapeHtml(id)}">Ask about this paper</button>
+
+          <button class="btn danger" data-delete="${escapeHtml(id)}">Delete</button>
+
+        </div>
+
+      </article>`;
+
+      }).join("");
+
+      container.querySelectorAll("[data-summary]").forEach(btn => {
+
+        btn.addEventListener("click", () => {
+
+          $("summary-paper").value = btn.dataset.summary;
+
+          showView("summary");
+
+          $("summary-form").requestSubmit();
+
+        });
+
+      });
+
+      container.querySelectorAll("[data-ask-paper]").forEach(btn => {
+
+        btn.addEventListener("click", () => {
+
+          $("ask-scope").value = btn.dataset.askPaper;
+
+          showView("ask");
+
+          $("ask-question").focus();
+
+        });
+
+      });
+
+      container.querySelectorAll("[data-delete]").forEach(btn => {
+
+        btn.addEventListener("click", async () => {
+
+          const id = btn.dataset.delete;
+
+          if (!confirm("Delete this paper from your library?")) return;
+
+          btn.disabled = true;
+
+          try {
+
+            await api("/papers/" + encodeURIComponent(id), { method: "DELETE" });
+
+            await loadPapers();
+
+          } catch (error) {
+
+            alert("Could not delete paper: " + error.message);
+
+            btn.disabled = false;
+
+          }
+
+        });
+
+      });
+
+    }
+
+    function populatePaperSelectors() {
+
+      const previousAsk = $("ask-scope").value;
+
+      const previousSummary = $("summary-paper").value;
+
+      $("ask-scope").innerHTML =
+
+        `<option value="all">All papers in my library</option>` +
+
+        state.papers.map(p =>
+
+          `<option value="${escapeHtml(paperId(p))}">${escapeHtml(p.title)}</option>`
+
+        ).join("");
+
+      $("summary-paper").innerHTML =
+
+        `<option value="">Select a paper</option>` +
+
+        state.papers.map(p =>
+
+          `<option value="${escapeHtml(paperId(p))}">${escapeHtml(p.title)}</option>`
+
+        ).join("");
+
+      if ([...$("ask-scope").options].some(o => o.value === previousAsk)) {
+
+        $("ask-scope").value = previousAsk;
+
+      }
+
+      if ([...$("summary-paper").options].some(o => o.value === previousSummary)) {
+
+        $("summary-paper").value = previousSummary;
+
+      }
+
+      $("compare-paper-options").innerHTML = state.papers.length
+
+        ? state.papers.map(p => `
+
+      <label class="paper-card" style="display:flex;align-items:flex-start;gap:12px;cursor:pointer">
+
+        <input type="checkbox" class="compare-paper" value="${escapeHtml(paperId(p))}" style="width:auto;margin-top:4px">
+
+        <span>
+
+          <strong>${escapeHtml(p.title)}</strong>
+
+          <span class="muted small" style="display:block;margin-top:5px">
+
+            ${escapeHtml(p.year || p.publication_year || "Year unavailable")}
+
+          </span>
+
+        </span>
+
+      </label>`).join("")
+
+        : `<div class="empty">Upload at least two papers to compare them.</div>`;
+
+    }
+
+    /* Upload PDF */
+
+    $("upload-form").addEventListener("submit", async event => {
+
+      event.preventDefault();
+
+      const file = $("pdf-file").files[0];
+
+      if (!file) {
+
+        showMessage("upload-message", "Choose a PDF file first.", "error");
+
+        return;
+
+      }
+
+      if (!file.name.toLowerCase().endsWith(".pdf")) {
+
+        showMessage("upload-message", "Only PDF files are supported.", "error");
+
+        return;
+
+      }
+
+      if (file.size > 25 * 1024 * 1024) {
+
+        showMessage("upload-message", "This file exceeds the 25 MB limit.", "error");
+
+        return;
+
+      }
+
+      const form = new FormData();
+
+      form.append("file", file);
+
+      setBusy("upload-button", true, "Uploading and processing…");
+
+      $("upload-progress").style.width = "35%";
+
+      showMessage("upload-message", "Uploading PDF and processing its contents…");
+
+      try {
+
+        const result = await api("/papers", { method: "POST", body: form });
+
+        $("upload-progress").style.width = "100%";
+
+        const title = result?.title || result?.filename || file.name;
+
+        showMessage("upload-message", `Upload processed: ${title}`, "success");
+
+        $("pdf-file").value = "";
+
+        await loadPapers();
+
+      } catch (error) {
+
+        $("upload-progress").style.width = "0%";
+
+        showMessage("upload-message", error.message, "error");
+
+      } finally {
+
+        setBusy("upload-button", false);
+
+      }
+
+    });
+
+    $("refresh-library").addEventListener("click", loadPapers);
+
+    $("refresh-all").addEventListener("click", async () => {
+
+      await checkHealth();
+
+      await loadPapers();
+
+    });
+
+    /* Discovery */
+
+    function populateYearOptions() {
+
+      const select = $("discover-year");
+
+      if (select.options.length > 1) return;
+
+      const currentYear = new Date().getFullYear();
+
+      for (let year = currentYear; year >= 1990; year--) {
+
+        const option = document.createElement("option");
+
+        option.value = String(year);
+
+        option.textContent = String(year);
+
+        select.appendChild(option);
+
+      }
+
+    }
+
+    $("discover-form").addEventListener("submit", async event => {
+
+      event.preventDefault();
+
+      const topic = $("discover-topic").value.trim();
+
+      const limit = Number($("discover-limit").value);
+
+      const yearValue = $("discover-year").value;
+
+      if (topic.length < 3) {
+
+        showMessage("discover-message", "Enter a topic with at least 3 characters.", "error");
+
+        return;
+
+      }
+
+      const body = { query: topic, limit };
+
+      const yearMode = $("discover-year-mode") ? $("discover-year-mode").value : "exact";
+
+      if (yearValue) {
+        if (yearMode === "from") {
+          body.from_year = Number(yearValue);
+        } else {
+          body.year = Number(yearValue);
+        }
+      }
+
+      const sortValue = $("discover-sort") ? $("discover-sort").value : "smart";
+      if (sortValue) body.sort_by = sortValue;
+
+      const oaOnly = $("discover-oa-only") ? $("discover-oa-only").checked : false;
+      if (oaOnly) body.open_access_only = true;
+
+      setBusy("discover-button", true, "Searching OpenAlex…");
+
+      showMessage("discover-message", "Searching for related research papers…");
+
+      $("discovery-results").innerHTML =
+
+        `<div class="empty">Searching the research database…</div>`;
+
+      $("discover-count").textContent = "Searching…";
+
+      try {
+
+        const result = await api("/similar-papers", {
+
+          method: "POST",
+
+          headers: { "Content-Type": "application/json" },
+
+          body: JSON.stringify(body)
+
+        });
+
+        state.discovery = Array.isArray(result?.results) ? result.results : [];
+
+        renderDiscoveryResults(result);
+
+        if (result?.message) {
+
+          showMessage("discover-message", result.message, "warning");
+
+        } else {
+
+          showMessage(
+
+            "discover-message",
+
+            `Found ${state.discovery.length} papers for your topic.`,
+
+            "success"
+
+          );
+
+        }
+
+      } catch (error) {
+
+        state.discovery = [];
+
+        $("discover-count").textContent = "Search failed";
+
+        $("discovery-results").innerHTML =
+
+          `<div class="empty">Could not search papers. ${escapeHtml(error.message)}</div>`;
+
+        showMessage("discover-message", error.message, "error");
+
+      } finally {
+
+        setBusy("discover-button", false);
+
+      }
+
+    });
+
+    function renderDiscoveryResults(result) {
+
+      const papers = Array.isArray(result?.results) ? result.results : [];
+
+      const topic = result?.query || $("discover-topic").value.trim();
+
+      $("discover-count").textContent =
+
+        `${papers.length} result${papers.length === 1 ? "" : "s"} for “${topic}”` +
+
+        (result?.requested ? ` · Requested ${result.requested}` : "");
+
+      if (!papers.length) {
+
+        $("discovery-results").innerHTML =
+
+          `<div class="empty">No papers were returned. Try a broader or differently worded topic.</div>`;
+
+        return;
+
+      }
+
+      $("discovery-results").innerHTML = papers.map((paper, index) => {
+
+        const title = paper.title || "Untitled paper";
+
+        const authors = Array.isArray(paper.authors)
+
+          ? paper.authors.join(", ")
+
+          : (paper.authors || "");
+
+        const year = paper.year ||
+
+          (paper.publication_date || "").slice(0, 4) ||
+
+          "Year unavailable";
+
+        const citations = formatNumber(paper.citations);
+
+        const oa = paper.is_open_access === true
+
+          ? `<span class="pill" style="color:var(--accent2)">Open access</span>`
+
+          : `<span class="pill">Access not confirmed</span>`;
+
+        const finalScore = Number(paper.topic_rank_score);
+
+        const semanticScore = Number(paper.semantic_score);
+
+        const recencyScore = Number(paper.recency_score);
+
+        const citationScore = Number(paper.citation_score);
+
+        const scores = `
+
+      <div class="score-row">
+
+        ${Number.isFinite(finalScore)
+
+            ? `<span class="score">Overall ranking score <strong>${(finalScore * 100).toFixed(1)}%</strong></span>`
+
+            : ""}
+
+        ${Number.isFinite(semanticScore)
+
+            ? `<span class="score">Cosine similarity <strong>${semanticScore.toFixed(3)}</strong></span>`
+
+            : ""}
+
+        ${Number.isFinite(recencyScore)
+
+            ? `<span class="score">Recency signal <strong>${(recencyScore * 100).toFixed(1)}%</strong></span>`
+
+            : ""}
+
+        ${Number.isFinite(citationScore)
+
+            ? `<span class="score">Citation signal <strong>${(citationScore * 100).toFixed(1)}%</strong></span>`
+
+            : ""}
+
+      </div>`;
+
+        const abstract = paper.abstract
+
+          ? `<details class="abstract-details">
+
+           <summary>Read abstract</summary>
+
+           <div class="abstract-text">${escapeHtml(paper.abstract)}</div>
+
+         </details>`
+
+          : `<div class="muted small" style="margin-top:12px">Abstract unavailable in the returned record.</div>`;
+
+        const links = [
+
+          externalLink(paper.url, "Open paper"),
+
+          externalLink(paper.openalex_url, "OpenAlex record"),
+
+          externalLink(paper.pdf_url, "PDF")
+
+        ].filter(Boolean);
+
+        if (paper.doi) {
+
+          const doiUrl = /^https?:\/\//i.test(paper.doi)
+
+            ? paper.doi
+
+            : "https://doi.org/" + paper.doi.replace(/^doi:/i, "");
+
+          const doiLink = externalLink(doiUrl, "DOI");
+
+          if (doiLink && !links.includes(doiLink)) links.push(doiLink);
+
+        }
+
+        return `
+
+      <article class="paper-card">
+
+        <div class="row spread">
+
+          <span class="pill">Result ${index + 1}</span>
+
+          ${oa}
+
+        </div>
+
+        <h3 style="margin-top:12px">${escapeHtml(title)}</h3>
+
+        <div class="paper-meta">
+
+          <span><strong>${escapeHtml(year)}</strong></span>
+
+          <span>· ${escapeHtml(formatDate(paper.publication_date))}</span>
+
+          <span>· ${escapeHtml(citations)} citations</span>
+
+          ${paper.journal ? `<span>· ${escapeHtml(paper.journal)}</span>` : ""}
+
+        </div>
+
+        ${authors ? `<p class="muted small" style="margin:4px 0 8px;"><strong>Authors:</strong> ${escapeHtml(authors)}</p>` : ""}
+
+        ${scores}
+
+        ${abstract}
+
+        <div class="paper-actions">
+
+          <button class="btn primary btn-sm" data-summarize-discovery="${index}">✨ AI Summary (~250 words)</button>
+
+          <button class="btn secondary btn-sm" data-import-discovery="${index}">📥 Add to Library & Ask</button>
+
+          ${links.length
+
+            ? links.join("")
+
+            : `<span class="muted small">No external links available.</span>`}
+
+        </div>
+
+        <div id="discovery-summary-${index}" class="discovery-summary-box" style="display:none;"></div>
+
+      </article>`;
+
+      }).join("");
+
+      // Attach event handlers for AI Summary and Import on discovery results
+      const container = $("discovery-results");
+
+      container.querySelectorAll("[data-summarize-discovery]").forEach(btn => {
+        btn.addEventListener("click", async () => {
+          const idx = Number(btn.dataset.summarizeDiscovery);
+          const paper = state.discovery[idx];
+          if (!paper) return;
+          const box = $(`discovery-summary-${idx}`);
+          if (!box) return;
+
+          if (box.style.display !== "none" && box.dataset.loaded === "true") {
+            box.style.display = "none";
+            btn.textContent = "✨ AI Summary (~250 words)";
+            return;
+          }
+
+          box.style.display = "block";
+          box.innerHTML = `
+        <div class="muted small" style="display:flex; align-items:center; gap:8px;">
+          <span class="pill">⚡ Groq Fast Synthesis</span> Synthesizing structured ~250-word summary with subparts…
+        </div>`;
+          btn.disabled = true;
+
+          try {
+            const res = await api("/discover/summarize", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                title: paper.title,
+                authors: paper.authors,
+                year: paper.year,
+                journal: paper.journal,
+                abstract: paper.abstract,
+                doi: paper.doi
+              })
+            });
+
+            box.dataset.loaded = "true";
+            btn.disabled = false;
+            btn.textContent = "Hide AI Summary";
+
+            const sectionsDict = res.sections_dict || {};
+            box.innerHTML = `
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:14px; padding-bottom:8px; border-bottom:1px solid var(--border);">
+            <span class="word-badge">📄 ${res.word_count || 250} words · Structured Paper Summary</span>
+            <span class="pill">${escapeHtml(res.year ? "Year: " + res.year : "Recent")} · ${escapeHtml(Array.isArray(paper.authors) ? paper.authors.slice(0, 3).join(", ") : (paper.authors || "Authors"))}</span>
+          </div>
+          <div class="summary-subpart">
+            <h4>📌 Executive Overview / TL;DR</h4>
+            <p>${escapeHtml(res.tldr || "Overview unavailable.")}</p>
+          </div>
+          <div class="summary-subpart">
+            <h4>🎯 Problem and Motivation</h4>
+            <p>${escapeHtml(sectionsDict["Problem and motivation"] || "Details unavailable.")}</p>
+          </div>
+          <div class="summary-subpart">
+            <h4>⚙️ Proposed Methodology & Approach</h4>
+            <p>${escapeHtml(sectionsDict["Method"] || "Details unavailable.")}</p>
+          </div>
+          <div class="summary-subpart">
+            <h4>📊 Datasets & Experiments</h4>
+            <p>${escapeHtml(sectionsDict["Data and experiments"] || "Details unavailable.")}</p>
+          </div>
+          <div class="summary-subpart">
+            <h4>🏆 Key Results & Quantitative Findings</h4>
+            <p>${escapeHtml(sectionsDict["Key results"] || "Details unavailable.")}</p>
+          </div>
+          <div class="summary-subpart">
+            <h4>⚠️ Limitations & Future Work</h4>
+            <p>${escapeHtml(sectionsDict["Limitations"] || "Details unavailable.")}</p>
+          </div>
+        `;
+          } catch (err) {
+            btn.disabled = false;
+            btn.textContent = "✨ AI Summary (~250 words)";
+            box.innerHTML = `<div class="notice error">Failed to generate summary: ${escapeHtml(err.message)}</div>`;
+          }
+        });
+      });
+
+      container.querySelectorAll("[data-import-discovery]").forEach(btn => {
+        btn.addEventListener("click", async () => {
+          const idx = Number(btn.dataset.importDiscovery);
+          const paper = state.discovery[idx];
+          if (!paper) return;
+
+          const originalText = btn.textContent;
+          btn.disabled = true;
+          btn.textContent = "Importing…";
+
+          try {
+            const importRes = await api("/discover/import", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                title: paper.title,
+                abstract: paper.abstract || paper.title,
+                authors: paper.authors,
+                year: paper.year,
+                journal: paper.journal,
+                doi: paper.doi,
+                pdf_url: paper.pdf_url
+              })
+            });
+
+            btn.textContent = "✓ In Library";
+            showMessage("discover-message", `Added "${paper.title}" to your library. Loading Q&A…`, "success");
+            await loadPapers();
+            showView("ask");
+            const scope = $("ask-scope");
+            if (scope && importRes.paper_id) {
+              scope.value = importRes.paper_id;
+            }
+            $("ask-question").focus();
+          } catch (err) {
+            btn.disabled = false;
+            btn.textContent = originalText;
+            showMessage("discover-message", `Import failed: ${err.message}`, "error");
+          }
+        });
+      });
+
+    }
+
+    $("clear-discovery").addEventListener("click", () => {
+
+      $("discover-topic").value = "";
+
+      $("discover-year").value = "";
+
+      if ($("discover-year-mode")) $("discover-year-mode").value = "exact";
+
+      if ($("discover-sort")) $("discover-sort").value = "smart";
+
+      if ($("discover-oa-only")) $("discover-oa-only").checked = false;
+
+      $("discover-message").innerHTML = "";
+
+      $("discover-count").textContent = "Search for a topic to see papers here.";
+
+      $("discovery-results").innerHTML =
+
+        `<div class="empty">Enter a research topic above to discover papers.</div>`;
+
+      state.discovery = [];
+
+    });
+
+    /* Ask Papers helpers */
+
+    function extractAnswer(data) {
+
+      if (typeof data === "string") return data;
+
+      if (!data || typeof data !== "object") return JSON.stringify(data ?? "");
+
+      return data.answer ||
+
+        data.response ||
+
+        data.result ||
+
+        data.summary ||
+
+        data.text ||
+
+        JSON.stringify(data, null, 2);
+
+    }
+
+    function renderSources(sources, invalidCitations = []) {
+
+      if (!Array.isArray(sources) || !sources.length) return "";
+
+      return `
+
+    <div class="source-list">
+
+      <h3>Sources returned by CiteSure</h3>
+
+      ${sources.map((source, i) => {
+
+        if (typeof source === "string") {
+
+          return `
+
+            <div class="source-item">
+
+              <strong>Source ${i + 1}</strong>
+
+              <p>${escapeHtml(source)}</p>
+
+            </div>`;
+
+        }
+
+        const meta = source.meta && typeof source.meta === "object"
+          ? source.meta
+          : {};
+        const title = source.title ||
+          source.paper_title ||
+          source.filename ||
+          source.name ||
+          meta.title ||
+          `Source ${i + 1}`;
+
+        const text = source.text ||
+
+          source.content ||
+
+          source.excerpt ||
+
+          source.chunk ||
+
+          "";
+
+        const page = source.page || meta.page;
+        const section = source.section || meta.section;
+        const url = source.url || source.doi || "";
+
+        return `
+
+          <div class="source-item">
+
+            <strong>${escapeHtml(title)}</strong>
+
+            ${section ? `<span class="muted small"> · ${escapeHtml(section)}</span>` : ""}
+            ${page ? `<span class="muted small"> · Page ${escapeHtml(page)}</span>` : ""}
+
+            ${text ? `<p>${escapeHtml(text)}</p>` : ""}
+
+            ${url
+
+            ? `<p>${externalLink(
+
+              /^https?:\/\//i.test(url) ? url : "https://doi.org/" + url,
+
+              "Open source"
+
+            )}</p>`
+
+            : ""}
+
+          </div>`;
+
+      }).join("")}
+
+      ${Array.isArray(invalidCitations) && invalidCitations.length
+
+          ? `<div class="notice warning">
+
+             The API reported citation markers that could not be validated:
+
+             ${escapeHtml(invalidCitations.join(", "))}
+
+           </div>`
+
+          : ""}
+
+    </div>`;
+
+    }
+
+    /*
+    
+     * Handles both common streaming response formats:
+    
+     *
+    
+     * 1. SSE:
+    
+     *    data: {"type":"token","text":"Hello"}
+    
+     *
+    
+     * 2. Newline-delimited JSON:
+    
+     *    {"type":"token","text":"Hello"}
+    
+     *
+    
+     * Recognized event fields include:
+    
+     *    type, text, token, sources, invalid_citations, done, error, message
+    
+     *
+    
+     * The frontend cannot recover source metadata if the backend does not send it.
+    
+     */
+
+    async function askStreaming(question, paperIds) {
+
+      const response = await fetch(API_BASE + "/ask/stream", {
+
+        method: "POST",
+
+        headers: { "Content-Type": "application/json" },
+
+        body: JSON.stringify({
+
+          question,
+
+          paper_ids: paperIds,
+
+          history: state.history
+
+        })
+
+      });
+
+      if (!response.ok) {
+
+        const raw = await response.text();
+
+        let message = raw;
+
+        try {
+
+          const parsed = JSON.parse(raw);
+
+          message = parsed.detail || parsed.message || raw;
+
+        } catch (_) { }
+
+        throw new Error(message || `Request failed (${response.status})`);
+
+      }
+
+      if (!response.body) {
+
+        throw new Error("Streaming response is not supported by this browser.");
+
+      }
+
+      const reader = response.body.getReader();
+
+      const decoder = new TextDecoder();
+
+      let buffer = "";
+
+      let answer = "";
+
+      let sources = [];
+
+      let invalid = [];
+
+      $("ask-answer").innerHTML = `
+
+    <div class="answer-box">
+
+      <div class="muted small">CiteSure is preparing an answer…</div>
+
+      <p id="streamed-answer"></p>
+
+    </div>`;
+
+      function handleLine(rawLine) {
+
+        let line = rawLine.trim();
+
+        if (!line || line.startsWith(":")) return;
+
+        // Support SSE data lines.
+
+        if (line.startsWith("data:")) {
+
+          line = line.slice(5).trim();
+
+        } else if (/^(event|id|retry):/.test(line)) {
+
+          return;
+
+        }
+
+        if (!line || line === "[DONE]") return;
+
+        let event;
+
+        try {
+
+          event = JSON.parse(line);
+
+        } catch (_) {
+
+          return;
+
+        }
+
+        if (!event || typeof event !== "object") return;
+
+        if (event.type === "sources" || Array.isArray(event.sources)) {
+
+          sources = event.sources || [];
+
+          invalid = event.invalid_citations || [];
+
+        }
+
+        if (event.type === "error" || event.error) {
+
+          throw new Error(
+
+            event.message || event.error || "Streaming answer failed."
+
+          );
+
+        }
+
+        // Also support APIs that send the answer in one complete event.
+
+        if (
+
+          typeof event.answer === "string" &&
+
+          event.type !== "token"
+
+        ) {
+
+          answer = event.answer;
+
+          const target = $("streamed-answer");
+
+          if (target) target.textContent = answer;
+
+        }
+
+        if (event.done) {
+
+          if (Array.isArray(event.sources)) sources = event.sources;
+
+          if (Array.isArray(event.invalid_citations)) {
+
+            invalid = event.invalid_citations;
+
+          }
+
+          return;
+
+        }
+
+        const token = event.text ?? event.token;
+
+        if (
+
+          typeof token === "string" &&
+
+          (
+
+            event.type === "token" ||
+
+            event.token !== undefined ||
+
+            event.text !== undefined
+
+          )
+
+        ) {
+
+          answer += token;
+
+          const target = $("streamed-answer");
+
+          if (target) target.textContent = answer;
+
+        }
+
+      }
+
+      while (true) {
+
+        const { value, done } = await reader.read();
+
+        if (done) break;
+
+        buffer += decoder.decode(value, { stream: true });
+
+        const lines = buffer.split("\n");
+
+        buffer = lines.pop();
+
+        for (const line of lines) {
+
+          handleLine(line);
+
+        }
+
+      }
+
+      buffer += decoder.decode();
+
+      if (buffer.trim()) {
+
+        // The final buffer can contain multiple lines.
+
+        for (const line of buffer.split("\n")) {
+
+          handleLine(line);
+
+        }
+
+      }
+
+      $("ask-answer").innerHTML = `
+
+    <div class="answer-box">
+
+      <h3>Answer</h3>
+
+      <p>${escapeHtml(answer || "No answer text was returned.")}</p>
+
+    </div>
+
+    ${renderSources(sources, invalid)}`;
+
+      return answer;
+
+    }
+
+    /* Ask Papers submission */
+
+    $("ask-form").addEventListener("submit", async event => {
+
+      event.preventDefault();
+
+      const question = $("ask-question").value.trim();
+
+      if (question.length < 3) {
+
+        showMessage("ask-message", "Enter a question with at least 3 characters.", "error");
+
+        return;
+
+      }
+
+      const selected = $("ask-scope").value;
+
+      const paperIds = selected === "all" ? null : [selected];
+
+      setBusy("ask-button", true, "Thinking…");
+
+      showMessage("ask-message", "Retrieving evidence and generating an answer…");
+
+      try {
+
+        let answer;
+
+        try {
+
+          answer = await askStreaming(question, paperIds);
+
+        } catch (streamError) {
+
+          /*
+    
+           * Use the regular endpoint if streaming fails before an answer is
+    
+           * displayed. If an answer has already appeared, surface the error
+    
+           * instead of silently submitting the same question again.
+    
+           */
+
+          const displayed = $("ask-answer").textContent.trim();
+
+          if (displayed && !/stream|NDJSON|fetch|network/i.test(streamError.message)) {
+
+            throw streamError;
+
+          }
+
+          const data = await api("/ask", {
+
+            method: "POST",
+
+            headers: { "Content-Type": "application/json" },
+
+            body: JSON.stringify({
+
+              question,
+
+              paper_ids: paperIds,
+
+              history: state.history
+
+            })
+
+          });
+
+          answer = extractAnswer(data);
+
+          $("ask-answer").innerHTML = `
+
+        <div class="answer-box">
+
+          <h3>Answer</h3>
+
+          <p>${escapeHtml(answer)}</p>
+
+        </div>
+
+        ${renderSources(data.sources, data.invalid_citations)}`;
+
+        }
+
+        state.history.push(
+
+          ["user", question],
+
+          ["assistant", answer]
+
+        );
+
+        state.history = state.history.slice(-12);
+
+        showMessage(
+
+          "ask-message",
+
+          "Answer generated. Review the available sources alongside it.",
+
+          "success"
+
+        );
+
+      } catch (error) {
+
+        $("ask-answer").innerHTML = "";
+
+        showMessage("ask-message", error.message, "error");
+
+      } finally {
+
+        setBusy("ask-button", false);
+
+      }
+
+    });
+
+    $("clear-ask").addEventListener("click", () => {
+
+      state.history = [];
+
+      $("ask-question").value = "";
+
+      $("ask-answer").innerHTML = "";
+
+      $("ask-message").innerHTML = "";
+
+    });
+
+    /* Paper Summary */
+
+    $("summary-form").addEventListener("submit", async event => {
+
+      event.preventDefault();
+
+      const id = $("summary-paper").value;
+
+      if (!id) {
+
+        showMessage("summary-message", "Select a paper first.", "error");
+
+        return;
+
+      }
+
+      setBusy("summary-button", true, "Generating summary…");
+
+      showMessage("summary-message", "Generating a summary for the selected paper…");
+
+      $("summary-output").innerHTML = "";
+
+      try {
+
+        const data = await api("/papers/" + encodeURIComponent(id) + "/summary");
+
+        const facetIcons = {
+          "Problem and motivation": "🎯",
+          "Method": "⚙️",
+          "Data and experiments": "📊",
+          "Key results": "🏆",
+          "Limitations": "⚠️"
+        };
+
+        const sections = Array.isArray(data?.sections) ? data.sections : [];
+        const summarySections = sections.map(([name, text]) => `
+      <div class="summary-subpart">
+        <h4>${facetIcons[name] || "📑"} ${escapeHtml(name)}</h4>
+        <p>${escapeHtml(text)}</p>
+      </div>
+    `).join("");
+
+        const paperTitle = state.papers.find(p => paperId(p) === id)?.title || "Paper summary";
+        const wordCount = data?.word_count || 250;
+
+        $("summary-output").innerHTML = `
+      <div class="answer-box">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:16px; border-bottom:1px solid var(--border); padding-bottom:10px;">
+          <h2 style="margin:0;">${escapeHtml(paperTitle)}</h2>
+          <span class="word-badge">📄 ${wordCount} words · Structured RAG Analysis</span>
+        </div>
+        <div class="summary-subpart">
+          <h4>📌 Overview / TL;DR</h4>
+          <p>${escapeHtml(data?.tldr || extractAnswer(data))}</p>
+        </div>
+        ${summarySections}
+      </div>`;
+
+        showMessage("summary-message", "Summary generated.", "success");
+
+      } catch (error) {
+
+        showMessage("summary-message", error.message, "error");
+
+      } finally {
+
+        setBusy("summary-button", false);
+
+      }
+
+    });
+
+    /* Compare Papers */
+
+    $("compare-form").addEventListener("submit", async event => {
+
+      event.preventDefault();
+
+      const paperIds = [
+
+        ...document.querySelectorAll(".compare-paper:checked")
+
+      ].map(el => el.value);
+
+      const aspects = [
+
+        ...document.querySelectorAll(".aspect-option:checked")
+
+      ].map(el => el.value);
+
+      if (paperIds.length < 2 || paperIds.length > 5) {
+
+        showMessage("compare-message", "Select between two and five papers.", "error");
+
+        return;
+
+      }
+
+      if (!aspects.length) {
+
+        showMessage("compare-message", "Select at least one comparison aspect.", "error");
+
+        return;
+
+      }
+
+      setBusy("compare-button", true, "Comparing papers…");
+
+      showMessage("compare-message", "Comparing the selected papers…");
+
+      $("compare-output").innerHTML = "";
+
+      try {
+
+        const data = await api("/compare", {
+
+          method: "POST",
+
+          headers: { "Content-Type": "application/json" },
+
+          body: JSON.stringify({
+
+            paper_ids: paperIds,
+
+            aspects
+
+          })
+
+        });
+
+        const content = extractAnswer(data);
+
+        $("compare-output").innerHTML = `
+
+      <div class="answer-box">
+
+        <h2>Comparison results</h2>
+
+        <p>${escapeHtml(content)}</p>
+
+        ${data && typeof data === "object" && data.sources
+
+            ? renderSources(data.sources, data.invalid_citations)
+
+            : ""}
+
+      </div>`;
+
+        showMessage("compare-message", "Comparison generated.", "success");
+
+      } catch (error) {
+
+        showMessage("compare-message", error.message, "error");
+
+      } finally {
+
+        setBusy("compare-button", false);
+
+      }
+
+    });
+
+    /* Initialize the workspace */
+
+    (async function init() {
+
+      populateYearOptions();
+
+      await checkHealth();
+
+      await loadPapers();
+
+    })();
+
+  </script>
+
+</body>
+
+</html>
